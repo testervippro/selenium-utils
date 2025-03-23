@@ -11,7 +11,8 @@
 This library comes pre-installed with some dependencies. You can use it by default or override them by re-writing in your project.
 
 # Example: Using the Library to Record Video
-# Copy all class RecorderManager.java to your project
+
+Copy all class ```java RecorderManager.java ``` to your project
 ## Using MONTE for Video Recording
 ```java
 @BeforeClass
