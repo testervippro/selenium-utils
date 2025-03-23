@@ -1,14 +1,93 @@
-# Install from maven
+# Install from Maven
 ```xml
-         <dependency>
-            <groupId>io.github.testervippro</groupId>
-            <artifactId>selenium-utils</artifactId>
-            <version>0.9</version>
-        </dependency>
+<dependency>
+    <groupId>io.github.testervippro</groupId>
+    <artifactId>selenium-utils</artifactId>
+    <version>0.9</version>
+</dependency>
 ```
 
+# Library Features
+This library comes pre-installed with some dependencies. You can use it by default or override them by re-writing in your project.
 
-# This lib have pre-install some lib ,cam use it by default or override by re-write in your project
+# Example: Using the Library to Record Video
+
+## Using MONTE for Video Recording
+```java
+@BeforeClass
+public void start() throws Exception {
+    RecorderManager.startVideoRecording(RecorderManager.RECORDTYPE.MONTE, "Video01");
+}
+
+@AfterClass
+public void stop() throws Exception {
+    // If set to true, video converts from AVI to MP4 and deletes the AVI file
+    RecorderManager.stopVideoRecording(RecorderManager.RECORDTYPE.MONTE, true);
+}
+```
+
+## Using FFMPEG for Video Recording
+```java
+@BeforeClass
+public void start() throws Exception {
+    RecorderManager.startVideoRecording(RecorderManager.RECORDTYPE.FFMPEG, "Video01");
+}
+
+@AfterClass
+public void stop() throws Exception {
+    // When recording with FFMPEG, setting true or false has no impact as it always records in MP4 format
+    RecorderManager.stopVideoRecording(RecorderManager.RECORDTYPE.FFMPEG, true);
+}
+```
+
+# Attaching Video to Allure Report
+
+This implementation is based on [this reference](https://github.com/biczomate/allure-testng7.5-attachment-example).
+
+```java
+import io.qameta.allure.Attachment;
+import org.openqa.selenium.WebDriver;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class AllureTestLifecycleListener implements TestLifecycleListener {
+
+    public AllureTestLifecycleListener() {
+        // Default constructor
+    }
+
+    @Attachment(value = "Test Video", type = "video/mp4")
+    public byte[] saveVideo(WebDriver driver) {
+        // Ensure nameVideo is not null
+        if (RecorderManager.nameVideo == null || RecorderManager.nameVideo.isEmpty()) {
+            System.err.println("Video name is not set.");
+            return new byte[0];
+        }
+
+        File videoFile = new File("videos", RecorderManager.nameVideo);
+
+        if (!videoFile.exists()) {
+            System.err.println("Video file not found: " + videoFile.getAbsolutePath());
+            return new byte[0];
+        }
+        try (FileInputStream fis = new FileInputStream(videoFile)) {
+            byte[] videoBytes = new byte[(int) videoFile.length()];
+            fis.read(videoBytes);
+            return videoBytes;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
+    }
+
+    @Override
+    public void beforeTestStop(TestResult result) {
+        WebDriver driver = DriverManager.getDriver(); // Retrieve the driver instance
+        saveVideo(driver);
+    }
+}
+```
 
 ## General Properties
 ```xml
