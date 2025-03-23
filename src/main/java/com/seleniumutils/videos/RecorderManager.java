@@ -1,4 +1,4 @@
-package org.videos;
+
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -264,55 +264,6 @@ public class RecorderManager {
       }
 
     }
-
-//    public  static void _convertAviToMp4(String inputFileName, String outputFileName) throws IOException, InterruptedException {
-//      ffmpegPath = os.contains("mac")
-//          ? Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg")
-//          : Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg.exe");
-//
-//      if (!Files.exists(ffmpegPath)) {
-//        throw new IOException("FFmpeg executable not found at: " + ffmpegPath);
-//      }
-//
-//      if (!os.contains("win")) {
-//        setExecutablePermission(ffmpegPath);
-//      }
-//
-//      ProcessBuilder ffmpegBuilder = new ProcessBuilder(
-//          ffmpegPath.toString(),
-//          "-i", inputFileName,
-//          "-c:v", "libx264",
-//          "-preset", "fast",
-//          "-crf", "23",
-//          "-c:a", "aac",
-//          "-b:a", "192k",
-//          "-y", outputFileName
-//      );
-//
-//
-//      ffmpegBuilder.redirectErrorStream(true);
-//      ffmpegProcess = ffmpegBuilder.start();
-//
-//      ExecutorService executorService = Executors.newFixedThreadPool(2);
-//
-//      executorService.submit(() -> readStream(ffmpegProcess.getInputStream()));
-//      executorService.submit(() -> readStream(ffmpegProcess.getErrorStream()));
-//
-//      int ffmpegExitCode = ffmpegProcess.waitFor();
-//      executorService.shutdown();
-//
-//      if (!executorService.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)) {
-//        executorService.shutdownNow();
-//      }
-//
-//      if (ffmpegExitCode == 0) {
-//        deleteFile(inputFileName);
-//      } else {
-//        log.severe("Conversion failed with exit code: " + ffmpegExitCode);
-//      }
-//    }
-
-
 
 
     private static void readStream(InputStream inputStream) {
