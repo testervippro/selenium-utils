@@ -114,3 +114,59 @@ Ensure your project includes the Allure Maven plugin:
     <junit.version>5.11.0-M2</junit.version>
 </properties>
 ```
+# After install pom.xml your project become shorter 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.thoaikx</groupId>
+    <artifactId>selenium-java-automation</artifactId>
+    <version>1.0.0</version>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.test.skip>true</maven.test.skip>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <suite>local</suite>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.testervippro</groupId>
+            <artifactId>selenium-utils</artifactId>
+            <version>0.9</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>2.12.0</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/suites/${suite}.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <skipTests>${maven.test.skip}</skipTests>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+
+```
+
