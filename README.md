@@ -1,4 +1,12 @@
-# Maven Configuration
+# Install from maven
+```xml
+         <dependency>
+            <groupId>io.github.testervippro</groupId>
+            <artifactId>selenium-utils</artifactId>
+            <version>0.9</version>
+        </dependency>
+```
+
 
 # This lib have pre-install some lib ,cam use it by default or override by re-write in your project
 
