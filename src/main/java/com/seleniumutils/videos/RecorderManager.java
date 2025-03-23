@@ -106,6 +106,11 @@ public class RecorderManager {
 
   }
 
+    public static void stopVideoRecording(RECORDTYPE recordType) throws Exception {
+    // Default to false
+    stopVideoRecording(recordType, false);
+  }
+
   public static void convertAviToMp4(String inputVideo,String outputVideo) throws IOException, InterruptedException{
 
     VideoRecord._convertAviToMp4(inputVideo, outputVideo);
