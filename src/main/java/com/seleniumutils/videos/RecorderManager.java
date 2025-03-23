@@ -4,6 +4,7 @@ import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import java.util.concurrent.TimeUnit;
 import org.checkerframework.checker.units.qual.s;
 import org.monte.media.Format;
 import org.monte.media.Registry;
@@ -29,8 +30,8 @@ public class RecorderManager {
   public  enum RECORDTYPE {
     MONTE,
     FFMPEG
-  } 
-  
+  }
+
 
   private static final String USER_DIR = System.getProperty("user.dir");
   private static final String DOWNLOADED_FILES_FOLDER = "videos";
@@ -181,7 +182,7 @@ public class RecorderManager {
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(finalFfmpegProcess.getInputStream()))) {
         String line;
         while ((line = reader.readLine()) != null) {
-          log.info(line);
+          //log.info(line);
         }
       } catch (IOException e) {
         log.severe("Error reading FFmpeg output: " + e.getMessage());
@@ -259,52 +260,55 @@ public class RecorderManager {
 
     }
 
-    public  static void _convertAviToMp4(String inputFileName, String outputFileName) throws IOException, InterruptedException {
-      ffmpegPath = os.contains("mac")
-          ? Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg")
-          : Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg.exe");
+//    public  static void _convertAviToMp4(String inputFileName, String outputFileName) throws IOException, InterruptedException {
+//      ffmpegPath = os.contains("mac")
+//          ? Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg")
+//          : Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg.exe");
+//
+//      if (!Files.exists(ffmpegPath)) {
+//        throw new IOException("FFmpeg executable not found at: " + ffmpegPath);
+//      }
+//
+//      if (!os.contains("win")) {
+//        setExecutablePermission(ffmpegPath);
+//      }
+//
+//      ProcessBuilder ffmpegBuilder = new ProcessBuilder(
+//          ffmpegPath.toString(),
+//          "-i", inputFileName,
+//          "-c:v", "libx264",
+//          "-preset", "fast",
+//          "-crf", "23",
+//          "-c:a", "aac",
+//          "-b:a", "192k",
+//          "-y", outputFileName
+//      );
+//
+//
+//      ffmpegBuilder.redirectErrorStream(true);
+//      ffmpegProcess = ffmpegBuilder.start();
+//
+//      ExecutorService executorService = Executors.newFixedThreadPool(2);
+//
+//      executorService.submit(() -> readStream(ffmpegProcess.getInputStream()));
+//      executorService.submit(() -> readStream(ffmpegProcess.getErrorStream()));
+//
+//      int ffmpegExitCode = ffmpegProcess.waitFor();
+//      executorService.shutdown();
+//
+//      if (!executorService.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)) {
+//        executorService.shutdownNow();
+//      }
+//
+//      if (ffmpegExitCode == 0) {
+//        deleteFile(inputFileName);
+//      } else {
+//        log.severe("Conversion failed with exit code: " + ffmpegExitCode);
+//      }
+//    }
 
-      if (!Files.exists(ffmpegPath)) {
-        throw new IOException("FFmpeg executable not found at: " + ffmpegPath);
-      }
-
-      if (!os.contains("win")) {
-        setExecutablePermission(ffmpegPath);
-      }
-
-      ProcessBuilder ffmpegBuilder = new ProcessBuilder(
-          ffmpegPath.toString(),
-          "-i", inputFileName,
-          "-c:v", "libx264",
-          "-preset", "fast",
-          "-crf", "23",
-          "-c:a", "aac",
-          "-b:a", "192k",
-          "-y", outputFileName
-      );
 
 
-      ffmpegBuilder.redirectErrorStream(true);
-      ffmpegProcess = ffmpegBuilder.start();
-
-      ExecutorService executorService = Executors.newFixedThreadPool(2);
-
-      executorService.submit(() -> readStream(ffmpegProcess.getInputStream()));
-      executorService.submit(() -> readStream(ffmpegProcess.getErrorStream()));
-
-      int ffmpegExitCode = ffmpegProcess.waitFor();
-      executorService.shutdown();
-
-      if (!executorService.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)) {
-        executorService.shutdownNow();
-      }
-
-      if (ffmpegExitCode == 0) {
-        deleteFile(inputFileName);
-      } else {
-        log.severe("Conversion failed with exit code: " + ffmpegExitCode);
-      }
-    }
 
     private static void readStream(InputStream inputStream) {
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -313,6 +317,52 @@ public class RecorderManager {
         }
       } catch (IOException e) {
         log.severe("Error reading stream: " + e.getMessage());
+      }
+    }
+    public static void _convertAviToMp4(String inputFileName, String outputFileName) throws IOException, InterruptedException {
+      ffmpegPath = getFfmpegPath();
+      if (!Files.exists(ffmpegPath)) {
+        throw new IOException("FFmpeg executable not found at: " + ffmpegPath);
+      }
+
+      if (!os.contains("win")) {
+        setExecutablePermission(ffmpegPath);
+      }
+
+      // Updated FFmpeg command
+      ProcessBuilder ffmpegBuilder = new ProcessBuilder(
+          ffmpegPath.toString(),
+          "-i", inputFileName,
+          "-c:v", "libx264",
+          "-preset", "medium",
+          "-crf", "18",
+          "-c:a", "aac",
+          "-b:a", "128k",
+          "-pix_fmt","yuv420p",
+          "-movflags", "+faststart", // Ensures file is playable immediately
+          "-y", outputFileName
+      );
+
+      //-c:v libx264 -preset medium -crf 18 -c:a aac -b:a 128k -pix_fmt yuv420p -movflags +faststart -y "videos/Test999-20250323_fixed.mp4"
+      ffmpegBuilder.redirectErrorStream(true);
+      Process ffmpegProcess = ffmpegBuilder.start();
+
+      ExecutorService executorService = Executors.newFixedThreadPool(2);
+      executorService.submit(() -> readStream(ffmpegProcess.getInputStream()));
+      executorService.submit(() -> readStream(ffmpegProcess.getErrorStream()));
+
+      int ffmpegExitCode = ffmpegProcess.waitFor();
+      executorService.shutdown();
+
+      if (!executorService.awaitTermination(10L, TimeUnit.SECONDS)) {
+        executorService.shutdownNow();
+      }
+
+      if (ffmpegExitCode == 0) {
+        log.info("Conversion successful: " + outputFileName);
+        deleteFile(inputFileName);  // Ensure input file deletion only if conversion succeeds
+      } else {
+        log.severe("Conversion failed with exit code: " + ffmpegExitCode);
       }
     }
 
@@ -346,7 +396,7 @@ public class RecorderManager {
 
     private String name;
     public  String nameVideo ;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
     public SpecializedScreenRecorder(GraphicsConfiguration cfg, Rectangle captureArea, Format fileFormat, Format screenFormat, Format mouseFormat, Format audioFormat, File movieFolder, String name)
         throws IOException, AWTException {
@@ -369,6 +419,8 @@ public class RecorderManager {
 
 
   }
+
+
 
 
 }
