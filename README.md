@@ -83,9 +83,6 @@ Ensure your project includes the Allure Maven plugin:
 # General Properties
 ```xml
 <properties>
-    <maven.test.skip>true</maven.test.skip>
-    <skipTests>true</skipTests>
-    <allure.maven>2.12.0</allure.maven>
     <allure.version>2.24.0</allure.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <allure-maven.version>2.11.2</allure-maven.version>
