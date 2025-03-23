@@ -74,13 +74,13 @@ public class RecorderManager {
             }
         }
         
-        public static void stopVideoRecording(RECORDTYPE recordType) throws Exception{
+        public static void stopVideoRecording(RECORDTYPE recordType, boolean hasDeleteAndConvet) throws Exception{
 
              // Select recording type using Java 17 arrow switch
              switch (recordType) {
                 case MONTE -> {
                     log.info("Stop MONTE recording ");
-                    VideoRecord._stopRecording(false);
+                    VideoRecord._stopRecording(hasDeleteAndConvet);
                 
                 }
                 case FFMPEG -> {
@@ -106,6 +106,12 @@ public class RecorderManager {
             }
             
         }
+
+        public static void convertAviToMp4(String inputVideo,String outputVideo) throws IOException, InterruptedException{
+
+            VideoRecord._convertAviToMp4(inputVideo, outputVideo);
+        }
+
     
         public static  Path getFfmpegPath (){
     
@@ -254,7 +260,7 @@ public class RecorderManager {
                
             }
         
-            public  static void convertAviToMp4(String inputFileName, String outputFileName) throws IOException, InterruptedException {
+            public  static void _convertAviToMp4(String inputFileName, String outputFileName) throws IOException, InterruptedException {
                  ffmpegPath = os.contains("mac")
                         ? Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg")
                         : Path.of(System.getProperty("user.home"), ".m2", "repository", "ffmpeg","ffmpeg.exe");
