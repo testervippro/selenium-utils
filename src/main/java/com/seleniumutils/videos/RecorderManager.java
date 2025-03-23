@@ -24,11 +24,13 @@ import static org.monte.media.FormatKeys.*;
 import static org.monte.media.VideoFormatKeys.*;
 
 
- enum RECORDTYPE {
-    MONTE,
-    FFMPEG
-} 
+
 public class RecorderManager {
+    
+    static enum RECORDTYPE {
+        MONTE,
+        FFMPEG
+    } 
 
     private static final String USER_DIR = System.getProperty("user.dir");
     private static final String DOWNLOADED_FILES_FOLDER = "videos";
