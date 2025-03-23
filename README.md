@@ -45,51 +45,42 @@ public void stop() throws Exception {
 This implementation is based on [this reference](https://github.com/biczomate/allure-testng7.5-attachment-example).
 
 ```java
-import io.qameta.allure.Attachment;
-import org.openqa.selenium.WebDriver;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+@AfterClass
+public void stop() throws Exception {
+    RecorderManager.stopVideoRecording(RecorderManager.RECORDTYPE.MONTE, true);
+    File videoPath = new File("videos", RecorderManager.nameVideo);
+    log.info(videoPath);
 
-public class AllureTestLifecycleListener implements TestLifecycleListener {
-
-    public AllureTestLifecycleListener() {
-        // Default constructor
-    }
-
-    @Attachment(value = "Test Video", type = "video/mp4")
-    public byte[] saveVideo(WebDriver driver) {
-        // Ensure nameVideo is not null
-        if (RecorderManager.nameVideo == null || RecorderManager.nameVideo.isEmpty()) {
-            System.err.println("Video name is not set.");
-            return new byte[0];
-        }
-
-        File videoFile = new File("videos", RecorderManager.nameVideo);
-
-        if (!videoFile.exists()) {
-            System.err.println("Video file not found: " + videoFile.getAbsolutePath());
-            return new byte[0];
-        }
-        try (FileInputStream fis = new FileInputStream(videoFile)) {
-            byte[] videoBytes = new byte[(int) videoFile.length()];
-            fis.read(videoBytes);
-            return videoBytes;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new byte[0];
-        }
-    }
-
-    @Override
-    public void beforeTestStop(TestResult result) {
-        WebDriver driver = DriverManager.getDriver(); // Retrieve the driver instance
-        saveVideo(driver);
+    if (videoPath.exists() && videoPath.isFile()) { // Check if file exists and is a file
+        Allure.addAttachment("Video", "video/mp4",
+            Files.asByteSource(videoPath).openStream(), "mp4");
+    } else {
+        log.info("Video file does not exist: " + videoPath.getAbsolutePath());
     }
 }
 ```
 
-## General Properties
+### Running Tests with Allure
+```sh
+mvn clean test
+mvn allure:serve
+```
+
+### Example 
+![image](https://github.com/user-attachments/assets/0f23b25a-e98e-42d6-93c2-77f7b52ec11e)
+
+
+### Install Allure Maven Plugin
+Ensure your project includes the Allure Maven plugin:
+```xml
+<plugin>
+    <groupId>io.qameta.allure</groupId>
+    <artifactId>allure-maven</artifactId>
+    <version>2.12.0</version>
+</plugin>
+```
+
+# General Properties
 ```xml
 <properties>
     <maven.test.skip>true</maven.test.skip>
@@ -125,4 +116,3 @@ public class AllureTestLifecycleListener implements TestLifecycleListener {
     <junit.version>5.11.0-M2</junit.version>
 </properties>
 ```
-
