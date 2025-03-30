@@ -1,4 +1,3 @@
----
 
 # Install from Maven
 
@@ -9,8 +8,6 @@
     <version>1.3</version>
 </dependency>
 ```
-
----
 
 # Library Features
 
