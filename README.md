@@ -1,8 +1,6 @@
-Here’s your content formatted properly in Markdown:
-
 ---
 
-# 📦 Install from Maven
+# Install from Maven
 
 ```xml
 <dependency>
@@ -14,15 +12,15 @@ Here’s your content formatted properly in Markdown:
 
 ---
 
-# 📌 Library Features
+# Library Features
 
 This library comes pre-installed with some dependencies. You can use it by default or override them by re-writing in your project.
 
 ---
 
-# 🎥 Example: Using the Library to Record Video
+# Example: Using the Library to Record Video
 
-## ✅ Using **MONTE** for Video Recording
+## Using MONTE for Video Recording
 
 Copy all class `RecorderManager.java` to your project.
 
@@ -41,7 +39,7 @@ public void stop() throws Exception {
 
 ---
 
-## ✅ Using **FFMPEG** for Video Recording
+## Using FFMPEG for Video Recording
 
 ```java
 @BeforeClass
@@ -58,7 +56,7 @@ public void stop() throws Exception {
 
 ---
 
-# 📎 Attaching Video to Allure Report
+# Attaching Video to Allure Report
 
 This implementation is based on [this reference](https://github.com/biczomate/allure-testng7.5-attachment-example).
 
@@ -80,20 +78,20 @@ public void stop() throws Exception {
 
 ---
 
-# 🚀 Running Tests with Allure
+# Running Tests with Allure
 
 ```sh
 mvn clean test
 mvn allure:serve
 ```
 
-### 🖼️ Example
+Example:
 
 ![image](https://github.com/user-attachments/assets/0f23b25a-e98e-42d6-93c2-77f7b52ec11e)
 
 ---
 
-# 🛠️ Install Allure Maven Plugin
+# Install Allure Maven Plugin
 
 Ensure your project includes the Allure Maven plugin:
 
@@ -107,19 +105,27 @@ Ensure your project includes the Allure Maven plugin:
 
 ---
 
-# 🖥️ **Selenium Grid Standalone  record video with Podman (No Docker)**  
+# Selenium Grid Standalone Record Video with Podman (No Docker)
 
-# Must include exec-maven-plugin in pon.xml your project
-Run PowerShell with (refer:https://github.com/SeleniumHQ/docker-selenium?tab=readme-ov-file#video-recording)
+## Must include exec-maven-plugin in `pom.xml` of your project
 
 ```sh
 powershell -ep Bypass -f StandaloneGrid.ps1
 ```
 
+This script:
+- Ensures Podman and dependencies exist
+- Initializes and starts Podman Machine if not running
+- Cleans up existing Selenium & Video containers
+- Starts Selenium Grid (Chrome) & Video Recording
+- Runs Maven tests (`mvn clean test -Dsuite=local`)
+- Cleans up containers & network after test execution
+
+Run other command with [reference](https://github.com/SeleniumHQ/docker-selenium?tab=readme-ov-file#video-recording)
 
 ---
 
-# ⚙️ General Properties
+# General Properties
 
 ```xml
 <properties>
@@ -156,9 +162,10 @@ powershell -ep Bypass -f StandaloneGrid.ps1
 
 ---
 
-# 📌 After Installing `pom.xml`, Your Project Becomes Shorter
+# After Installing `pom.xml`, Your Project Becomes Shorter
 
-### **🔹 Final `pom.xml` Structure**
+### Final `pom.xml` Structure
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -186,45 +193,6 @@ powershell -ep Bypass -f StandaloneGrid.ps1
             <version>0.9</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.12.0</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/suites/${suite}.xml</suiteXmlFile>
-                    </suiteXmlFiles>
-                    <skipTests>${maven.test.skip}</skipTests>
-                </configuration>
-            </plugin>
-
-             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <mainClass>com.seleniumutils.Main</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
 ```
 
----
