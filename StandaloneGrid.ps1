@@ -39,7 +39,6 @@ Write-Host "Podman is running!"
 & $podman run -d -p 4444:4444 -p 6900:5900 --net grid --name selenium --shm-size=2g selenium/standalone-chrome:4.30.0-20250323
 & $podman run -d --net grid --name video -v ./videos:/videos selenium/video:ffmpeg-7.1.1.1-20250323
 
-
 # Run test
 Invoke-Expression $mvn
 
