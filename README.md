@@ -107,7 +107,7 @@ Ensure your project includes the Allure Maven plugin:
 
 ---
 
-# 🖥️ **Selenium Grid Standalone with Podman (No Docker)**  
+# 🖥️ **Selenium Grid Standalone  record video with Podman (No Docker)**  
 
 Run PowerShell with (refer:https://github.com/SeleniumHQ/docker-selenium?tab=readme-ov-file#video-recording)
 
