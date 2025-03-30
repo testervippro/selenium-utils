@@ -4,6 +4,7 @@ mvn exec:java -DskipTests=true
 
 $podman = Join-Path $env:USERPROFILE ".m2\repository\selenium-utils\bin\podman.exe"
 
+# CHANGE BASE ON YOUR TEST
 $mvn = "mvn clean test -Dsuite=local"
 
 # Ensure Podman ,
