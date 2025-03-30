@@ -1,6 +1,11 @@
-$podman = "C:\Users\ad\Documents\podman-5.4.1\usr\bin\podman.exe"
+
+mvn clean install -DskipTests=true
+mvn exec:java -DskipTests=true
+
+$podman = Join-Path $env:USERPROFILE ".m2\repository\selenium-utils\bin\podman.exe"
 
 $mvn = "mvn clean test -Dsuite=local"
+
 # Ensure Podman ,
 if (-Not (Test-Path $podman)) { Write-Host "Podman not found!"; exit 1 }
 
@@ -22,14 +27,20 @@ if (-Not (& $podman machine list --format json | ConvertFrom-Json | Where-Object
     & $podman machine start
 }
 
+
+Write-Host "Clear if exists!"
+& $podman stop video selenium
+& $podman rm video selenium
+& $podman network rm grid
+
 Write-Host "Podman is running!"
 # Start Selenium and Video Containers
-& $podman --version
 & $podman network create grid
 & $podman run -d -p 4444:4444 -p 6900:5900 --net grid --name selenium --shm-size=2g selenium/standalone-chrome:4.30.0-20250323
 & $podman run -d --net grid --name video -v ./videos:/videos selenium/video:ffmpeg-7.1.1.1-20250323
 
-# Run Tests
+
+# Run test
 Invoke-Expression $mvn
 
 Write-Host "Clean!"
@@ -39,4 +50,3 @@ Write-Host "Clean!"
 # Optional
 #  machine stop podman-machine-default
 #  machine rm podman-machine-default
-# powershell -ep Bypass -f RunSeleniumGridAndRecordVideo.ps1
