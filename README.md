@@ -1,4 +1,5 @@
 
+```markdown
 # Install from Maven
 
 ```xml
@@ -104,21 +105,48 @@ Ensure your project includes the Allure Maven plugin:
 
 # Selenium Grid Standalone Record Video with Podman (No Docker)
 
-## Must include exec-maven-plugin in `pom.xml` of your project
+```java
+public class SeleniumGridTest {
+  private WebDriver driver;
+  private static final String GRID_URL = "http://localhost:4444/wd/hub";
 
-```sh
-powershell -ep Bypass -f StandaloneGrid.ps1
+  @BeforeClass
+  public void setUp() throws Exception {
+    // Place before call driver
+    PodmanManager.start();
+    // Set Chrome options
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--start-maximized");
+    // Initialize RemoteWebDriver
+    driver = new RemoteWebDriver(new URL(GRID_URL), options);
+
+  }
+
+  @Test
+  public void testGoogleTitle() {
+    // Open Google
+    driver.get("https://www.google.com");
+
+    // Verify the title
+    String title = driver.getTitle();
+    System.out.println("Page Title: " + title);
+    Assert.assertTrue(title.contains("Google"), "Title does not contain 'Google'");
+  }
+
+  @AfterClass
+  public void tearDown() throws Exception {
+
+    if (driver != null) {
+      driver.quit();
+    }
+    // Place after
+    PodmanManager.stop();
+
+  }
+}
 ```
 
-This script:
-- Ensures Podman and dependencies exist
-- Initializes and starts Podman Machine if not running
-- Cleans up existing Selenium & Video containers
-- Starts Selenium Grid (Chrome) & Video Recording
-- Runs Maven tests (`mvn clean test -Dsuite=local`)
-- Cleans up containers & network after test execution
-
-Run other command with [reference](https://github.com/SeleniumHQ/docker-selenium?tab=readme-ov-file#video-recording)
+Run other commands with [reference](https://github.com/SeleniumHQ/docker-selenium?tab=readme-ov-file#video-recording)
 
 ---
 
@@ -192,4 +220,3 @@ Run other command with [reference](https://github.com/SeleniumHQ/docker-selenium
     </dependencies>
 </project>
 ```
-
