@@ -6,7 +6,7 @@
 <dependency>
     <groupId>io.github.testervippro</groupId>
     <artifactId>selenium-utils</artifactId>
-    <version>1.3</version>
+    <version>1.4</version>
 </dependency>
 ```
 
@@ -103,23 +103,20 @@ Ensure your project includes the Allure Maven plugin:
 
 ---
 
-# Selenium Grid Standalone Record Video with Podman (No Docker)
+# Selenium Grid docker-compose Record Video with Podman (No Docker)
 
 ```java
 public class SeleniumGridTest {
   private WebDriver driver;
-  private static final String GRID_URL = "http://localhost:4444/wd/hub";
 
   @BeforeClass
-  public void setUp() throws Exception {
+  public void  setUp() throws Exception {
     // Place before call driver
-    PodmanManager.start();
+    SeleniumGrid.start("docker-compose-v3-video.yml");
     // Set Chrome options
     ChromeOptions options = new ChromeOptions();
     options.addArguments("--start-maximized");
-    // Initialize RemoteWebDriver
-    driver = new RemoteWebDriver(new URL(GRID_URL), options);
-
+    driver = new RemoteWebDriver(new URL(SeleniumGrid.GRID_URL), options);
   }
 
   @Test
@@ -135,13 +132,10 @@ public class SeleniumGridTest {
 
   @AfterClass
   public void tearDown() throws Exception {
-
     if (driver != null) {
       driver.quit();
     }
-    // Place after
-    PodmanManager.stop();
-
+    SeleniumGrid.stop("docker-compose-v3-video.yml");
   }
 }
 ```
