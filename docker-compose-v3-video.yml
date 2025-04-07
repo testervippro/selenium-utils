@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  selenium-hub:
+    image: selenium/hub:4.30.0-20250323
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+
+  chrome:
+    image: selenium/node-chrome:4.30.0-20250323
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+
+  edge:
+    image: selenium/node-edge:4.30.0-20250323
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+
+  firefox:
+    image: selenium/node-firefox:4.30.0-20250323
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+
+  chrome_video:
+    image: selenium/video:ffmpeg-7.1.1.1-20250323
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - chrome
+    environment:
+      - DISPLAY_CONTAINER_NAME=chrome
+      - SE_NODE_GRID_URL=http://selenium-hub:4444
+      - FILE_NAME=chrome_video.mp4
+
+  edge_video:
+    image: selenium/video:ffmpeg-7.1.1.1-20250323
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - edge
+    environment:
+      - DISPLAY_CONTAINER_NAME=edge
+      - SE_NODE_GRID_URL=http://selenium-hub:4444
+      - FILE_NAME=edge_video.mp4
+
+  firefox_video:
+    image: selenium/video:ffmpeg-7.1.1.1-20250323
+    volumes:
+      - ./videos:/videos
+    depends_on:
+      - firefox
+    environment:
+      - DISPLAY_CONTAINER_NAME=firefox
+      - SE_NODE_GRID_URL=http://selenium-hub:4444
+      - FILE_NAME=firefox_video.mp4
+
